@@ -1,0 +1,75 @@
+#!/bin/bash
+# # This script downloads mods from Steam's workshop with steamcmd.
+# # You can either run with arguments: ./moddownloader appid modid1 modid2 modid3 (etc...) or by setting up mods.conf.
+# # Requires steamcmd installed.
+# # Will resume if download is interrupted until it succeeds (max limit 30 attempts).
+
+# If mods.conf doesn't exist, set below the correct paths
+steamcmd="${HOME}"
+steaminstallation="${HOME}/.steam"
+
+
+# ---------- NO NEED TO EDIT BELOW -----------
+
+# Script's location and creation of logs dir if not exist
+script=$(realpath "$0")
+scriptpath=$(dirname "$script")
+logs="${scriptpath}/logs"
+[ ! -d "$logs" ] && mkdir "$logs"
+
+function output_msg {
+ grep ^ERROR <<<"$msg" &>/dev/null && echo "$(date) - [App ID: $appid] - $msg" >> "${logs}/$(basename "$0")-errors.txt"
+ echo -e "[Mod Downloader] $msg"
+}
+
+# Check if arguments are given and priotirize them over mods.conf
+[ -z "$1" ] && [ -z "$2" ] && [ ! -f "${scriptpath}/mods.conf" ] && \
+ msg="ERROR: You need to either pass arguments or setup the mods.conf. Exiting." && output_msg && exit 1
+[ -z "$1" ] && [ ! -f "${scriptpath}/mods.conf" ] && \
+ msg="ERROR: Syntax is wrong. App ID is missing. Exiting." && output_msg && exit 1
+[ -z "$2" ] && [ ! -f "${scriptpath}/mods.conf" ] && \
+ msg="ERROR: Syntax is wrong. Mod ID(s) is missing. Exiting." && output_msg && exit 1
+[ ! -z "$1" ] && appid=$(echo "$*" | awk '{print $1}')
+[ ! -z "$2" ] && modid=( $(echo "$*" | sed "s/$appid //g") )
+if [ -z "$1" ] && [ -f "${scriptpath}/mods.conf" ]; then
+ conf="${scriptpath}/mods.conf"
+ eval steaminstallation=$(grep "^steaminstallation" "$conf" | cut -d "=" -f 2)
+ eval steamcmd=$(grep "^steamcmd" "$conf" | cut -d "=" -f 2)
+ appid=$(grep "^appid" "$conf" | cut -d "=" -f 2)
+ modid=( $(grep "^modid" "$conf" | cut -d "=" -f 2) )
+fi
+
+[ -z "$steaminstallation" ] && msg="ERROR: Steam installation path is not set. Exiting." && output_msg && exit 1
+[ -z "$steamcmd" ] && msg="ERROR: steamcmd path is not set. Exiting." && output_msg && exit 1
+[ -z "$appid" ] && echo "ERROR: App ID is not set. Exiting." && output_msg && exit 1
+[ "${#modid[@]}" -eq 0 ] && msg="ERROR: Mod ID(s) is not set. Exiting." && output_msg && exit 1
+
+function get_mod {
+ "${steamcmd}/steamcmd" +login anonymous +workshop_download_item $appid $i validate +exit
+}
+
+#msg="Results for App id: $appid" && output_msg
+
+for i in "${modid[@]}"; do
+ #for c in {10..01}; do
+ # printf "\r\033[K[Mod Downloader] Will start downloading Mod ID: $i for App ID: ${appid} in $c seconds... (Press ctrl+c to cancel)"
+ # sleep 1
+ #done
+ #echo
+ msg="Starting downloading/validating Mod ID: $i for App ID: ${appid}..." && output_msg
+ count=0
+ while true; do
+  false
+  get_mod
+  [ "$?" -eq 0 ] && break
+  [ "$count" -ge 30 ] && msg="ERROR: Download attempts of $i reached the maximum limit of 30. Aborting." && output_msg && break
+  [ "$?" -ne 0 ] && \
+   msg="Something went wrong downloading the Mod ID: $i. Trying again... (Press ctrl+c to cancel) \n Some mods require multiple attempts. Ignore any timeout errors." && \
+   output_msg
+  let count=count+1
+  sleep 2
+ done
+ echo
+ [ ! -d "${steaminstallation}/SteamApps/workshop/content/${appid}/${i}" ] && msg="ERROR: Mod ID: $i for App ID: ${appid} downloaded failed!" || \
+  msg="Mod ID: $i for App ID: $appid found successfully downloaded." && output_msg
+done

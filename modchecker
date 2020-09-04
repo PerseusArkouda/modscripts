@@ -1,0 +1,95 @@
+#!/bin/bash
+# # This script can be scheduled to run daily (or whatever) and validate all defined mods.
+#   Then it will verify if the downloaded mods (after validation) contain updates and it will update if needed.
+#   It will not install mods that aren't installed. Use modunpacker directly for that.
+# # In case you want to use it for different sets of mods or server clusters, just rename the modscript folder and setup
+#   a different mods.conf with the other server paths and mod IDs. Make sure to set a good time apart in schedule because
+#   steamcmd won't let it run a new process while the previous one still running.
+# # Requires both moddownloader and modunpacker scripts to work.
+# # Errors are logged unders logs dir.
+# # You can either run with arguments: ./modchecker appid modid1 modid2 modid3 (etc...) or by setting up mods.conf.
+
+# If mods.conf doesn't exist, set below the correct paths
+steaminstallation="${HOME}/.steam"
+server=( \
+"${HOME}/server8" \
+"${HOME}/server6" \
+)
+
+
+# ---------- NO NEED TO EDIT BELOW -----------
+
+# Script's location and creation of logs dir if not exist
+script=$(realpath "$0")
+scriptpath=$(dirname "$script")
+logs="${scriptpath}/logs"
+[ ! -d "$logs" ] && mkdir "$logs"
+
+function output_msg {
+ grep ^ERROR <<<"$msg" &>/dev/null && echo "$(date) - [App ID: $appid] - $msg" >> "${logs}/$(basename "$0")-errors.txt"
+ echo "[Mod Checker] $msg"
+}
+
+# Check if arguments are given and priotirize them over mods.conf
+[ -z "$1" ] && [ -z "$2" ] && [ ! -f "${scriptpath}/mods.conf" ] && \
+ msg="ERROR: You need to either pass arguments or setup the mods.conf. Exiting." && output_msg && exit 1
+[ -z "$1" ] && [ ! -f "${scriptpath}/mods.conf" ] && \
+ msg="ERROR: Syntax is wrong. App ID is missing. Exiting." && output_msg && exit 1
+[ -z "$2" ] && [ ! -f "${scriptpath}/mods.conf" ] && \
+ msg="ERROR: Syntax is wrong. Mod ID(s) is missing. Exiting." && output_msg && exit 1
+[ ! -z "$1" ] && appid=$(echo "$*" | awk '{print $1}')
+[ ! -z "$2" ] && modid=( $(echo "$*" | sed "s/$appid //g") )
+if [ -z "$1" ] && [ -f "${scriptpath}/mods.conf" ]; then
+ conf="${scriptpath}/mods.conf"
+ eval steaminstallation=$(grep "^steaminstallation" "$conf" | cut -d "=" -f 2)
+ appid=$(grep "^appid" "$conf" | cut -d "=" -f 2)
+ modid=( $(grep "^modid" "$conf" | cut -d "=" -f 2) )
+ eval server=( $(grep "^server" "$conf" | cut -d "=" -f 2) )
+fi
+
+[ -z "$steaminstallation" ] && msg="ERROR: Steam installation path is not set. Exiting." && output_msg && exit 1
+[ -z "$appid" ] && echo "ERROR: App ID is not set. Exiting." && output_msg && exit 1
+[ "${#server[@]}" -eq 0 ] && msg="ERROR: Server(s) path is not set. Exiting." && output_msg && exit 1
+[ "${#modid[@]}" -eq 0 ] && msg="ERROR: Mod ID(s) is not set. Exiting." && output_msg && exit 1
+[ ! -f "${scriptpath}/moddownloader" ] && msg="ERROR: moddownloader script now found. Exiting." && output_msg && exit 1
+[ ! -f "${scriptpath}/modunpacker" ] && msg="ERROR: modunpacker script now found. Exiting." && output_msg && exit 1
+
+msg="Up and running..." && output_msg
+
+#msg="Results for App id: $appid" && output_msg
+
+# Validating the mods
+count=1
+for i in "${modid[@]}"; do
+ #msg="Checking for updates in Mod ID: $i" && output_msg
+ "${scriptpath}/moddownloader" "$appid" "$i" && \
+ online=$(cut -d "!" -f 2 "${steaminstallation}/SteamApps/workshop/content/${appid}/${i}/modmeta.info" 2>/dev/null | tr -dc '[:alnum:]')
+ skiponline=0
+ [ -z "$online" ] && [ "$notdownloaded" != "$i" ] && \
+   msg="ERROR: Mod ID: $i not found downloaded!" && output_msg && notdownloaded="$i" && skiponline=1
+ eval online${count}="$online"
+ eval modid${count}="$i"
+ let count=count+1
+done
+
+totalmodids=$count
+
+# Comparing the downloaded mods with the installed and updating if needed
+count=1
+while [ $count -lt $totalmodids ]; do
+ eval online=\$"online${count}"
+ eval modid=\$"modid${count}"
+ for s in "${server[@]}"; do
+  #msg="Now checking Mod ID: $modid in server: $s" && output_msg
+  #msg="Results for server $s" && output_msg
+  installed=$(cut -d "!" -f 2 "${s}/ShooterGame/Content/Mods/${modid}/modmeta.info" 2>/dev/null | tr -dc '[:alnum:]')
+  skipinstalled=0
+  [ -z "$installed" ] && msg="ERROR: Mod ID: $modid not found installed in server: ${s}!" && output_msg && skipinstalled=1
+  if [ "$skiponline" != "1" ] && [ "$skipinstalled" != "1" ]; then
+    [ "$online" != "$installed" ] && msg="Installing updated Mod ID: ${modid}..." && output_msg && \
+     "${scriptpath}/modunpacker" "$appid" "$modid"
+     [ "$?" -eq 0 ] && msg="Installed sucessfully Mod ID: ${modid}." || msg="ERROR: Failed to install Mod ID: ${modid}!" && output_msg
+  fi
+ done
+ let count=count+1
+done
