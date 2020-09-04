@@ -50,5 +50,5 @@ for example: @daily /path/to/modchecker appid modid1 modid2
 + If you want to maintain your standard set of mods updated, then you can create and setup mods.conf and schedule to run
 modchecker from a scheduler like crontab
 
-. Note1: Even if you do have mods.conf the arguments are prioritized and override mods.conf's appid and modid(s) respectively.
-. Note2: If you don't use mods.conf you have to open the script you want to use individually and edit your path variables at the top.
+* Note1: Even if you do have mods.conf the arguments are prioritized and override mods.conf's appid and modid(s) respectively.
+* Note2: If you don't use mods.conf you have to open the script you want to use individually and edit your path variables at the top.
