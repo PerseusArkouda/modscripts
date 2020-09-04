@@ -14,7 +14,7 @@ server=( \
 # ---------- NO NEED TO EDIT BELOW -----------
 
 # Getting the variables from modfunctions
-scriptname="Mod Checker"
+scriptname="Mod Unpacker"
 if [ ! -z "$*" ]; then
   appid="$1"
   modid=( $(echo "$*" | sed "s/$appid //g") )
