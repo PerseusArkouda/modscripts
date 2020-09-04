@@ -33,3 +33,21 @@
 #### modfunctions
 + This script is not meant to be used directly.
 + Contains shared functions for the rest of the scripts.
+
+
+### Purpose of these scripts
+Some may wonder what's the reason of these scripts while there are others that do more.
+The answer is quite simple: these do less by design.
+I'm writing or adopting code from others for the scripts primarily to use myself and I have found
+while some programs do more, it's more difficult for me to use them because I have already my personal
+settings where those programs require from me to change. So my scripts offer that freedom (as much as possible)
+to the user to not require to change his settings in order to use them and instead to customize them for a specific usage.
++ If you want just to download mod(s) you can do: ./moddownloader appid modid1 modid2
++ If you want just to install mod(s) you can do: ./modunpacker appid modid1 modid2
++ If you want to download or install a standard set of mods, then you can create and setup mods.conf
++ If you want to maintain a custom set of mods updated, then you can schedule to run modchecker from a scheduler like crontab
+for example: @daily /path/to/modchecker appid modid1 modid2
++ If you want to maintain your standard set of mods updated, then you can create and setup mods.conf and schedule to run
+modchecker from a scheduler like crontab
+
+Note: If you don't use mods.conf you have to open the script you want to use individually and edit your path variables at the top.
