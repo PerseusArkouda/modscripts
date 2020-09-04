@@ -5,6 +5,8 @@
 # # Will resume if download is interrupted until it succeeds (max limit 30 attempts).
 
 # If mods.conf doesn't exist, set below the correct paths
+# Will be overriden if you setup the mods.conf
+# Add or remove entries following the same pattern
 steamcmd="${HOME}"
 steaminstallation="${HOME}/.steam"
 

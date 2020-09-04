@@ -4,6 +4,8 @@
 # # You can either run with arguments: ./modchecker appid modid1 modid2 modid3 (etc...) or by setting up mods.conf.
 
 # If mods.conf doesn't exist, set below the correct paths
+# Will be overriden if you setup the mods.conf
+# Add or remove entries following the same pattern
 steaminstallation="${HOME}/.steam"
 server=( \
 "${HOME}/server8" \
