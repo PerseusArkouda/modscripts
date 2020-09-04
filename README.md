@@ -1,7 +1,7 @@
 # modscripts
 
 ### Scripts to manage Steam's workshop mods from Linux console. 
-+ moddownloader and modunpacker can run independently.
++ moddownloader and modunpacker can run independently.  
 *modfunctions must be present as it holds shared functions for all the scripts.*
 + modchecker requires both of the above.
 + You can either run with arguments: ./scriptname appid modid1 modid2 modid3 (etc...) or by setting up mods.conf.
