@@ -4,6 +4,7 @@
 + moddownloader and modunpacker can run independently.
 + modchecker requires both of the above.
 + You can either run with arguments: ./scriptname appid modid1 modid2 modid3 (etc...) or by setting up mods.conf.
++ If you use them without mods.conf, define the correct path variables at the top of the scripts.
 + Errors are both printed in console and logged in logs dir.
 
 (Read inside the scripts for more info)
@@ -17,7 +18,7 @@
 
 #### modunpacker 
 + Script to install directly downloaded mods from Steam's workshop to the game.
-   Uses modified code from ark_update.sh: https://github.com/Nexolight/ark_xposed
++ Uses modified code from ark_update.sh: https://github.com/Nexolight/ark_xposed
 
 #### modchecker
 + This script can be scheduled to run daily (or whatever) and validate all defined mods.
@@ -26,4 +27,9 @@
 + In case you want to use it for different sets of mods or server clusters, just rename the modscript folder and setup
    a different mods.conf with the other server paths and mod IDs. Make sure to set a good time apart in schedule because
    steamcmd won't let it run a new process while the previous one still running.
++ It will not install mods that aren't installed. Use modunpacker directly for that.
 + Requires both moddownloader and modunpacker scripts to work.
+
+#### modfunctions
++ This script is not meant to be used directly.
++ Contains shared functions for the rest of the scripts.

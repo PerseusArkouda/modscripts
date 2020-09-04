@@ -19,40 +19,15 @@ server=( \
 
 # ---------- NO NEED TO EDIT BELOW -----------
 
-# Script's location and creation of logs dir if not exist
-script=$(realpath "$0")
-scriptpath=$(dirname "$script")
-logs="${scriptpath}/logs"
-[ ! -d "$logs" ] && mkdir "$logs"
-
-function output_msg {
- grep ^ERROR <<<"$msg" &>/dev/null && echo "$(date) - [App ID: $appid] - $msg" >> "${logs}/$(basename "$0")-errors.txt"
- echo "[Mod Checker] $msg"
-}
-
-# Check if arguments are given and priotirize them over mods.conf
-[ -z "$1" ] && [ -z "$2" ] && [ ! -f "${scriptpath}/mods.conf" ] && \
- msg="ERROR: You need to either pass arguments or setup the mods.conf. Exiting." && output_msg && exit 1
-[ -z "$1" ] && [ ! -f "${scriptpath}/mods.conf" ] && \
- msg="ERROR: Syntax is wrong. App ID is missing. Exiting." && output_msg && exit 1
-[ -z "$2" ] && [ ! -f "${scriptpath}/mods.conf" ] && \
- msg="ERROR: Syntax is wrong. Mod ID(s) is missing. Exiting." && output_msg && exit 1
-[ ! -z "$1" ] && appid=$(echo "$*" | awk '{print $1}')
-[ ! -z "$2" ] && modid=( $(echo "$*" | sed "s/$appid //g") )
-if [ -z "$1" ] && [ -f "${scriptpath}/mods.conf" ]; then
- conf="${scriptpath}/mods.conf"
- eval steaminstallation=$(grep "^steaminstallation" "$conf" | cut -d "=" -f 2)
- appid=$(grep "^appid" "$conf" | cut -d "=" -f 2)
- modid=( $(grep "^modid" "$conf" | cut -d "=" -f 2) )
- eval server=( $(grep "^server" "$conf" | cut -d "=" -f 2) )
+# Getting the variables from modfunctions
+scriptname="Mod Checker"
+if [ ! -z "$*" ]; then
+  appid="$1"
+  modid=( $(echo "$*" | sed "s/$appid //g") )
+ . $(dirname "$0")/modfunctions "$scriptname" "$appid" "${modid[@]}"
+else
+ . $(dirname "$0")/modfunctions "$scriptname"
 fi
-
-[ -z "$steaminstallation" ] && msg="ERROR: Steam installation path is not set. Exiting." && output_msg && exit 1
-[ -z "$appid" ] && echo "ERROR: App ID is not set. Exiting." && output_msg && exit 1
-[ "${#server[@]}" -eq 0 ] && msg="ERROR: Server(s) path is not set. Exiting." && output_msg && exit 1
-[ "${#modid[@]}" -eq 0 ] && msg="ERROR: Mod ID(s) is not set. Exiting." && output_msg && exit 1
-[ ! -f "${scriptpath}/moddownloader" ] && msg="ERROR: moddownloader script now found. Exiting." && output_msg && exit 1
-[ ! -f "${scriptpath}/modunpacker" ] && msg="ERROR: modunpacker script now found. Exiting." && output_msg && exit 1
 
 msg="Up and running..." && output_msg
 

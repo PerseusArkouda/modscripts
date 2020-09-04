@@ -1,0 +1,48 @@
+#!/bin/bash
+# # This script is not meant to be used directly.
+#   Contains shared functions for the rest of the scripts.
+
+
+#-------- NO NEED TO EDIT ANYTHING --------
+
+# Script's location and creation of logs dir if not exist
+script=$(realpath "$0")
+scriptpath=$(dirname "$script")
+logs="${scriptpath}/logs"
+[ ! -d "$logs" ] && mkdir "$logs"
+
+function output_msg {
+ grep ^ERROR <<<"$msg" &>/dev/null && echo "$(date) - [App ID: $appid] - $msg" >> "${logs}/${scriptname}-errors.txt"
+ echo -e "[${scriptname}] $msg"
+}
+
+# Check if arguments are given and priotirize them over mods.conf
+scriptname="$1"
+[ -z "$2" ] && [ -z "$3" ] && [ ! -f "${scriptpath}/mods.conf" ] && \
+ msg="ERROR: You need to either pass arguments or setup the mods.conf. Exiting." && output_msg && exit 1
+[ -z "$2" ] && [ ! -f "${scriptpath}/mods.conf" ] && \
+ msg="ERROR: Syntax is wrong. App ID is missing. Exiting." && output_msg && exit 1
+[ -z "$3" ] && [ ! -f "${scriptpath}/mods.conf" ] && \
+ msg="ERROR: Syntax is wrong. Mod ID(s) is missing. Exiting." && output_msg && exit 1
+[ ! -z "$2" ] && appid="$2"
+[ ! -z "$3" ] && modid=( $(echo "$*" | sed "s/$appid //g") )
+if [ -z "$2" ] && [ -f "${scriptpath}/mods.conf" ]; then
+ conf="${scriptpath}/mods.conf"
+ eval steaminstallation=$(grep "^steaminstallation" "$conf" | cut -d "=" -f 2)
+ appid=$(grep "^appid" "$conf" | cut -d "=" -f 2)
+ modid=( $(grep "^modid" "$conf" | cut -d "=" -f 2) )
+ eval server=( $(grep "^server" "$conf" | cut -d "=" -f 2) )
+ eval steamcmd=$(grep "^steamcmd" "$conf" | cut -d "=" -f 2)
+fi
+
+# Error handling
+[ -z "$steaminstallation" ] && msg="ERROR: Steam installation path is not set. Exiting." && output_msg && exit 1
+[ -z "$appid" ] && msg="ERROR: App ID is not set. Exiting." && output_msg && exit 1
+[ "${#server[@]}" -eq 0 ] && msg="ERROR: Server(s) path is not set. Exiting." && output_msg && exit 1
+[ "${#modid[@]}" -eq 0 ] && msg="ERROR: Mod ID(s) is not set. Exiting." && output_msg && exit 1
+[ "$scriptname" = "Mod Downloader" ] && [ -z "$steamcmd" ] && msg="ERROR: steamcmd path is not set. Exiting." && output_msg && exit 1
+[ "$scriptname" = "Mod Checker" ] && [ ! -f "${scriptpath}/moddownloader" ] && msg="ERROR: moddownloader script now found. Exiting." && output_msg && exit 1
+[ "$scriptname" = "Mod Checker" ] && [ ! -f "${scriptpath}/modunpacker" ] && msg="ERROR: modunpacker script now found. Exiting." && output_msg && exit 1
+
+# Uncomment to debug
+#msg="Steam installation: $steaminstallation \nApp ID: $appid \nServers: ${server[@]} \nMod IDs: ${modid[@]}" && output_msg
