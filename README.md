@@ -22,7 +22,7 @@
 #### modchecker
 + This script can be scheduled to run daily (or whatever) and validate all defined mods.
    Then it will verify if the downloaded mods (after validation) contain updates and it will update if needed.
-   Example for crontab: @daily /path/to/modchecker
++ Example for crontab: @daily /path/to/modchecker
 + In case you want to use it for different sets of mods or server clusters, just rename the modscript folder and setup
    a different mods.conf with the other server paths and mod IDs. Make sure to set a good time apart in schedule because
    steamcmd won't let it run a new process while the previous one still running.
