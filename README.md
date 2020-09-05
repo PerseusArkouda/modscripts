@@ -28,7 +28,9 @@
 + In case you want to use it for different sets of mods or server clusters, just rename the modscript folder and setup
    a different mods.conf with the other server paths and mod IDs. Make sure to set a good time apart in schedule because
    steamcmd won't let it run a new process while the previous one still running.
-+ It will install all defined mods automatically.
++ It will install/update all defined mods automatically.
++ If a mod updates it will output the result in console and also will put an entry into logs/IMPORTANT_NOTICE.txt
+  so you know if you want to restart your server(s). 
 + Requires both moddownloader and modunpacker scripts to work.
 
 #### modfunctions
