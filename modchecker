@@ -9,21 +9,10 @@
 # # Errors are logged unders logs dir.
 # # You can either run with arguments: ./modchecker appid modid1 modid2 modid3 (etc...) or by setting up mods.conf.
 
-# If mods.conf doesn't exist, set below the correct paths
-# Will be overriden if you setup the mods.conf
-# Add or remove entries following the same pattern
-steaminstallation="${HOME}/.steam"
-server=( \
-"${HOME}/server8" \
-"${HOME}/server6" \
-)
-
-
 # ---------- NO NEED TO EDIT BELOW -----------
 
-scriptname="Mod Checker"
-
 # Getting the variables from modfunctions
+scriptname="Mod Checker"
 if [ ! -z "$*" ]; then
  appid=$(echo "$*" | tr -d '[:alpha:]' | awk '{print $1}')
  modid=( $(echo "$*" | sed "s/$appid //g" | tr -d '[:alpha:]') )
@@ -36,7 +25,7 @@ fi
 count=1
 for i in "${modid[@]}"; do
  msg="Downloading/validating Mod ID: $i" && output_msg
- "${scriptpath}/moddownloader" "$appid" "$i"
+ "${scriptpath}/moddownloader" "$scriptname" "$appid" "$i"
  online=$(cut -d "!" -f 2 "${steaminstallation}/SteamApps/workshop/content/${appid}/${i}/modmeta.info" 2>/dev/null | tr -dc '[:alnum:]')
  eval online${count}="$online"
  eval modid${count}="$i"

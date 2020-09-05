@@ -5,19 +5,27 @@
 
 # If mods.conf doesn't exist, set below the correct paths
 # Will be overriden if you setup the mods.conf
-# Add or remove entries following the same pattern
-steaminstallation="${HOME}/.steam"
+# Example: steaminstallation="${HOME}/.steam"
+steaminstallation=""
+# Example: server=( \
+# "${HOME}/server8" \
+# "${HOME}/server6" \
+# )
 server=( \
-"${HOME}/server8" \
-"${HOME}/server6" \
+"" \
 )
-
 
 # ---------- NO NEED TO EDIT BELOW -----------
 
 # Getting the variables from modfunctions
 scriptname="Mod Unpacker"
 if [ ! -z "$*" ]; then
+ if ! grep ^Mod <<<"$*" &>/dev/null; then
+  [ -z "$steaminstallation" ] && echo -e "ERROR: steaminstallation variable cannot be empty when script is used independently with arguments!\
+  \nOpen $scriptname and set the correct paths at the top of the script. Exiting." && exit 1
+  [ -z "$server" ] && echo -e "ERROR: server array variable(s) cannot be empty when script is used independently with arguments!\
+  \nOpen $scriptname and set the correct paths at the top of the script. Exiting." && exit 1
+ fi
  appid=$(echo "$*" | tr -d '[:alpha:]' | awk '{print $1}')
  modid=( $(echo "$*" | sed "s/$appid //g" | tr -d '[:alpha:]') )
  . $(dirname "$0")/modfunctions "$scriptname" "$appid" "${modid[@]}"

@@ -36,11 +36,11 @@ if [ -z "$2" ] && [ -f "${scriptpath}/mods.conf" ]; then
 fi
 
 # Error handling
-[ -z "$steaminstallation" ] && msg="ERROR: Steam installation path is not set. Exiting." && output_msg && exit 1
 [ -z "$appid" ] && msg="ERROR: App ID is not set. Exiting." && output_msg && exit 1
-[ "$scriptname" != "Mod Downloader" ] && [ "${#server[@]}" -eq 0 ] && msg="ERROR: Server(s) path is not set. Exiting." && output_msg && exit 1
+[ "$scriptname" != "Mod Checker" ] && [ "$scriptname" != "Mod Downloader" ] && [ "${#server[@]}" -eq 0 ] && msg="ERROR: Server(s) path is not set. Exiting." && output_msg && exit 1
 [ "${#modid[@]}" -eq 0 ] && msg="ERROR: Mod ID(s) is not set. Exiting." && output_msg && exit 1
-[ "$scriptname" = "Mod Downloader" ] && [ -z "$steamcmd" ] && msg="ERROR: steamcmd path is not set. Exiting." && output_msg && exit 1
+[ "$scriptname" != "Mod Checker" ] && [ "$scriptname" = "Mod Downloader" ] && [ -z "$steamcmd" ] && msg="ERROR: steamcmd path is not set. Exiting." && output_msg && exit 1
+[ "$scriptname" != "Mod Checker" ] && [ -z "$steaminstallation" ] && msg="ERROR: Steam installation path is not set. Exiting." && output_msg && exit 1
 [ "$scriptname" = "Mod Checker" ] && [ ! -f "${scriptpath}/moddownloader" ] && msg="ERROR: moddownloader script now found. Exiting." && output_msg && exit 1
 [ "$scriptname" = "Mod Checker" ] && [ ! -f "${scriptpath}/modunpacker" ] && msg="ERROR: modunpacker script now found. Exiting." && output_msg && exit 1
 

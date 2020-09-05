@@ -7,7 +7,7 @@
 # If mods.conf doesn't exist, set below the correct paths
 # Will be overriden if you setup the mods.conf
 #Example: steamcmd="${HOME}"
-steamcmd="a"
+steamcmd="${H"
 #Example: steaminstallation="${HOME}/.steam"
 steaminstallation=""
 
