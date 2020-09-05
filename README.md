@@ -28,7 +28,7 @@
 + In case you want to use it for different sets of mods or server clusters, just rename the modscript folder and setup
    a different mods.conf with the other server paths and mod IDs. Make sure to set a good time apart in schedule because
    steamcmd won't let it run a new process while the previous one still running.
-+ It will not install mods that aren't installed. Use modunpacker directly for that.
++ It will install all defined mods automatically.
 + Requires both moddownloader and modunpacker scripts to work.
 
 #### modfunctions
@@ -45,7 +45,7 @@ settings where those programs require from me to change. So my scripts offer tha
 to the user to not require to change his settings in order to use them and instead to customize them for a specific usage.
 + If you want just to download mod(s) you can do: ./moddownloader appid modid1 modid2
 + If you want just to install mod(s) you can do: ./modunpacker appid modid1 modid2
-+ If you want to download or install a standard set of mods, then you can create and setup mods.conf
++ If you want to download/install a standard set of mods, then you can create and setup mods.conf
 + If you want to maintain a custom set of mods updated, then you can schedule to run modchecker from a scheduler like crontab
 for example: @daily /path/to/modchecker appid modid1 modid2
 + If you want to maintain your standard set of mods updated, then you can create and setup mods.conf and schedule to run
