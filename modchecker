@@ -43,9 +43,11 @@ eval modid=\$"modid${count}"
   installed=$(cut -d "!" -f 2 "${s}/ShooterGame/Content/Mods/${modid}/modmeta.info" 2>/dev/null | tr -dc '[:alnum:]')
   [ ! -z "$online" ] && [ -z "$installed" ] && \
    msg="ERROR: Mod ID: $modid not found installed in server: ${s}. Installation skipped!" && output_msg
-  if [ ! -z "$online" ] && [ ! -z "$installed" ]; then
-    [ "$online" != "$installed" ] && msg="Installing new/updated Mod ID: ${modid}..." && output_msg && \
-     "${scriptpath}/modunpacker" "$appid" "$modid"
+  if [ ! -z "$online" ]; then
+   [ -z "$installed" ] && operation="updated" || operation="new"
+   if [ -z "$installed" ] || [ "$online" != "$installed" ]; then
+    msg="Installing $operation Mod ID: ${modid}..." && output_msg
+    "${scriptpath}/modunpacker" "$appid" "$modid"
   fi
  done
  let count=count+1
