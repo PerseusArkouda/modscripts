@@ -26,14 +26,16 @@ scriptname="$1"
  msg="ERROR: Syntax is wrong. Mod ID(s) is missing. Exiting." && output_msg && exit 1
 [ ! -z "$2" ] && appid="$2"
 [ ! -z "$3" ] && modid=( $(echo "$*" | sed "s/$appid //g" | tr -d '[:alpha:]') )
-if [ -z "$2" ] && [ -f "${scriptpath}/mods.conf" ]; then
- conf="${scriptpath}/mods.conf"
+conf="${scriptpath}/mods.conf"
+if [ -z "$2" ] && [ -f "$conf" ]; then
  eval steaminstallation=$(grep "^steaminstallation" "$conf" | grep -v "#" | cut -d "=" -f 2)
  appid=$(grep "^appid" "$conf" | cut -d "=" -f 2)
  modid=( $(grep "^modid" "$conf" | cut -d "=" -f 2) )
  eval server=( $(grep "^server" "$conf" | cut -d "=" -f 2) )
- eval steamcmd=$(grep "^steamcmd" "$conf" | cut -d "=" -f 2)
+ steamcmd=$(grep "^steamcmd" "$conf" | cut -d "=" -f 2)
 fi
+[ -z "$steamcmd" ] && [ -f "$conf" ] && eval steamcmd=$(grep "^steamcmd" "$conf" | cut -d "=" -f 2)
+[ -z "$steaminstallation" ] && [ -f "$conf" ] && eval steaminstallation=$(grep "^steaminstallation" "$conf" | grep -v "#" | cut -d "=" -f 2)
 
 # Error handling
 [ -z "$appid" ] && msg="ERROR: App ID is not set. Exiting." && output_msg && exit 1
@@ -45,4 +47,4 @@ fi
 [ "$scriptname" = "Mod Checker" ] && [ ! -f "${scriptpath}/modunpacker" ] && msg="ERROR: modunpacker script now found. Exiting." && output_msg && exit 1
 
 # Uncomment to debug
-#msg="Steam installation: $steaminstallation \nApp ID: $appid \nServers: ${server[@]} \nMod IDs: ${modid[@]}" && output_msg
+#msg="Steam installation: $steaminstallation \nSteamcmd: $steamcmd \nApp ID: $appid \nServers: ${server[@]} \nMod IDs: ${modid[@]}" && output_msg
