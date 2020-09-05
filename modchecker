@@ -46,7 +46,6 @@ eval modid=\$"modid${count}"
   if [ ! -z "$online" ] && [ ! -z "$installed" ]; then
     [ "$online" != "$installed" ] && msg="Installing new/updated Mod ID: ${modid}..." && output_msg && \
      "${scriptpath}/modunpacker" "$appid" "$modid"
-     [ "$?" -eq 0 ] && msg="Installed sucessfully Mod ID: ${modid}." || msg="ERROR: Failed to install Mod ID: ${modid}!" && output_msg
   fi
  done
  let count=count+1
