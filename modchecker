@@ -23,6 +23,8 @@ else
  . $(dirname "$0")/modfunctions "$scriptname"
 fi
 
+msg="Up and running..." && output_msg
+
 # Downloading/validating the mods
 count=1
 for i in "${modid[@]}"; do
@@ -44,10 +46,11 @@ eval modid=\$"modid${count}"
  for s in "${server[@]}"; do
   installed=$(cut -d "!" -f 2 "${s}/ShooterGame/Content/Mods/${modid}/modmeta.info" 2>/dev/null | tr -dc '[:alnum:]')
   if [ ! -z "$online" ]; then
-   [ -z "$installed" ] && operation="updated" || operation="new"
+   [ -z "$installed" ] && operation="new" || operation="updated"
    if [ -z "$installed" ] || [ "$online" != "$installed" ]; then
+    echo
     msg="Installing $operation Mod ID: ${modid}..." && output_msg
-    "${scriptpath}/modunpacker" "$scriptname" "$appid" "$modid" && \
+    "${scriptpath}/modunpacker" "$scriptname" "$appid" "$modid"
      [ "operation" = "updated" ] && \
      msg="NOTICE: Updated Mod ID: $modid in server: $s \nYou might want to restart your server now!" && msg_output
    fi
@@ -55,3 +58,6 @@ eval modid=\$"modid${count}"
  done
  let count=count+1
 done
+
+echo
+msg="All Mod IDs and server(s) checked!" && output_msg

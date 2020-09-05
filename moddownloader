@@ -45,12 +45,12 @@ for i in "${modid[@]}"; do
  count=0
  while true; do
   false
-  get_mod
-  [ "$?" -eq 0 ] && break
+  get_mod &>/dev/null
+  [ "$?" -eq 0 ] && msg="Done." && output_msg && break
   [ "$count" -ge 30 ] && msg="ERROR: Download attempts of $i reached the maximum limit of 30. Aborting." && output_msg && break
   [ "$?" -ne 0 ] && \
-   msg="Something went wrong downloading the Mod ID: $i. Trying again... (Press ctrl+c to cancel) \n Some mods require multiple attempts. Ignore any timeout errors." && \
-   output_msg
+   msg="Something went wrong downloading the Mod ID: $i. Trying again... (Press ctrl+c to cancel)" && output_msg
+   msg="Some mods require multiple attempts. Ignore any timeout errors." && output_msg
   let count=count+1
   sleep 2
  done
