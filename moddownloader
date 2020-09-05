@@ -13,24 +13,24 @@ steaminstallation="${HOME}/.steam"
 
 # ---------- NO NEED TO EDIT BELOW -----------
 
-# Getting the variables from modfunctions
 scriptname="Mod Downloader"
+
+# Getting the variables from modfunctions
 if [ ! -z "$*" ]; then
-  appid="$1"
-  modid=( $(echo "$*" | sed "s/$appid //g") )
+ appid=$(echo "$*" | tr -d '[:alpha:]' | awk '{print $1}')
+ modid=( $(echo "$*" | sed "s/$appid //g") )
  . $(dirname "$0")/modfunctions "$scriptname" "$appid" "${modid[@]}"
-else
+elif [ -z "$*" ] && [ -z "$scriptname" ]; then
  . $(dirname "$0")/modfunctions "$scriptname"
 fi
 
 # Downloading/validating the mods
 function get_mod {
- "${steamcmd}/steamcmd" +login anonymous +workshop_download_item $appid $i validate +exit
+ "${steamcmd}/steamcmd" +login anonymous +workshop_download_item "$appid" "$i" validate +exit
 }
 
-#msg="Results for App id: $appid" && output_msg
-
 for i in "${modid[@]}"; do
+ # Uncomment the lines below for 10 seconds delay of mods installation to give you time to cancel.
  #for c in {10..01}; do
  # printf "\r\033[K[Mod Downloader] Will start downloading Mod ID: $i for App ID: ${appid} in $c seconds... (Press ctrl+c to cancel)"
  # sleep 1
@@ -50,6 +50,6 @@ for i in "${modid[@]}"; do
   sleep 2
  done
  echo
- [ ! -d "${steaminstallation}/SteamApps/workshop/content/${appid}/${i}" ] && msg="ERROR: Mod ID: $i for App ID: ${appid} downloaded failed!" || \
-  msg="Mod ID: $i for App ID: $appid found successfully downloaded." && output_msg
+ [ ! -d "${steaminstallation}/SteamApps/workshop/content/${appid}/${i}" ] && msg="ERROR: Failed to download Mod ID: $i for App ID: ${appid}!" || \
+  msg="Mod ID: $i downloaded succesfully for App ID: $appid." && output_msg
 done

@@ -21,29 +21,23 @@ server=( \
 
 # ---------- NO NEED TO EDIT BELOW -----------
 
-# Getting the variables from modfunctions
 scriptname="Mod Checker"
+
+# Getting the variables from modfunctions
 if [ ! -z "$*" ]; then
-  appid="$1"
-  modid=( $(echo "$*" | sed "s/$appid //g") )
+ appid=$(echo "$*" | tr -d '[:alpha:]' | awk '{print $1}')
+ modid=( $(echo "$*" | sed "s/$appid //g" | tr -d '[:alpha:]') )
  . $(dirname "$0")/modfunctions "$scriptname" "$appid" "${modid[@]}"
 else
  . $(dirname "$0")/modfunctions "$scriptname"
 fi
 
-msg="Up and running..." && output_msg
-
-#msg="Results for App id: $appid" && output_msg
-
-# Validating the mods
+# Downloading/validating the mods
 count=1
 for i in "${modid[@]}"; do
- #msg="Checking for updates in Mod ID: $i" && output_msg
- "${scriptpath}/moddownloader" "$appid" "$i" && \
+ msg="Downloading/validating Mod ID: $i" && output_msg
+ "${scriptpath}/moddownloader" "$appid" "$i"
  online=$(cut -d "!" -f 2 "${steaminstallation}/SteamApps/workshop/content/${appid}/${i}/modmeta.info" 2>/dev/null | tr -dc '[:alnum:]')
- skiponline=0
- [ -z "$online" ] && [ "$notdownloaded" != "$i" ] && \
-   msg="ERROR: Mod ID: $i not found downloaded!" && output_msg && notdownloaded="$i" && skiponline=1
  eval online${count}="$online"
  eval modid${count}="$i"
  let count=count+1
@@ -54,16 +48,14 @@ totalmodids=$count
 # Comparing the downloaded mods with the installed and updating if needed
 count=1
 while [ $count -lt $totalmodids ]; do
- eval online=\$"online${count}"
- eval modid=\$"modid${count}"
+eval online=\$"online${count}"
+eval modid=\$"modid${count}"
  for s in "${server[@]}"; do
-  #msg="Now checking Mod ID: $modid in server: $s" && output_msg
-  #msg="Results for server $s" && output_msg
   installed=$(cut -d "!" -f 2 "${s}/ShooterGame/Content/Mods/${modid}/modmeta.info" 2>/dev/null | tr -dc '[:alnum:]')
-  skipinstalled=0
-  [ -z "$installed" ] && msg="ERROR: Mod ID: $modid not found installed in server: ${s}!" && output_msg && skipinstalled=1
-  if [ "$skiponline" != "1" ] && [ "$skipinstalled" != "1" ]; then
-    [ "$online" != "$installed" ] && msg="Installing updated Mod ID: ${modid}..." && output_msg && \
+  [ ! -z "$online" ] && [ -z "$installed" ] && \
+   msg="ERROR: Mod ID: $modid not found installed in server: ${s}. Installation skipped!" && output_msg
+  if [ ! -z "$online" ] && [ ! -z "$installed" ]; then
+    [ "$online" != "$installed" ] && msg="Installing new/updated Mod ID: ${modid}..." && output_msg && \
      "${scriptpath}/modunpacker" "$appid" "$modid"
      [ "$?" -eq 0 ] && msg="Installed sucessfully Mod ID: ${modid}." || msg="ERROR: Failed to install Mod ID: ${modid}!" && output_msg
   fi
