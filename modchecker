@@ -21,6 +21,9 @@ else
  . $(dirname "$0")/modfunctions "$scriptname"
 fi
 
+"${scriptpath}/modunpacker" "$scriptname" "$appid" "$modid"
+exit
+
 # Downloading/validating the mods
 count=1
 for i in "${modid[@]}"; do

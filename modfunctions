@@ -36,11 +36,12 @@ if [ -z "$2" ] && [ -f "$conf" ]; then
 fi
 [ -z "$steamcmd" ] && [ -f "$conf" ] && eval steamcmd=$(grep "^steamcmd" "$conf" | cut -d "=" -f 2)
 [ -z "$steaminstallation" ] && [ -f "$conf" ] && eval steaminstallation=$(grep "^steaminstallation" "$conf" | grep -v "#" | cut -d "=" -f 2)
+[ -z "$server" ] && [ -f "$conf" ] && eval server=( $(grep "^server" "$conf" | cut -d "=" -f 2) )
 
 # Error handling
 [ -z "$appid" ] && msg="ERROR: App ID is not set. Exiting." && output_msg && exit 1
-[ "$scriptname" != "Mod Checker" ] && [ "$scriptname" != "Mod Downloader" ] && [ "${#server[@]}" -eq 0 ] && msg="ERROR: Server(s) path is not set. Exiting." && output_msg && exit 1
-[ "${#modid[@]}" -eq 0 ] && msg="ERROR: Mod ID(s) is not set. Exiting." && output_msg && exit 1
+[ "$scriptname" != "Mod Checker" ] && [ "$scriptname" != "Mod Downloader" ] && [ -z "$server" ] && msg="ERROR: Server(s) path is not set. Exiting." && output_msg && exit 1
+[ -z "$server" ] && msg="ERROR: Mod ID(s) is not set. Exiting." && output_msg && exit 1
 [ "$scriptname" != "Mod Checker" ] && [ "$scriptname" = "Mod Downloader" ] && [ -z "$steamcmd" ] && msg="ERROR: steamcmd path is not set. Exiting." && output_msg && exit 1
 [ "$scriptname" != "Mod Checker" ] && [ -z "$steaminstallation" ] && msg="ERROR: Steam installation path is not set. Exiting." && output_msg && exit 1
 [ "$scriptname" = "Mod Checker" ] && [ ! -f "${scriptpath}/moddownloader" ] && msg="ERROR: moddownloader script now found. Exiting." && output_msg && exit 1

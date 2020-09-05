@@ -39,13 +39,12 @@ appworkshopdir="${steaminstallation}/SteamApps/workshop/content/${appid}"
 function extract_mod {
 
 for s in "${server[@]}"; do
- msg="Results for server $s" && output_msg
  for i in "${modid[@]}"; do
   modsrcdir="${appworkshopdir}/${i}"
   moddestdir="${s}/ShooterGame/Content/Mods/${i}"
 # Uncomment to simulate mod installation to verify your settings.
-#  msg="Will install $modsrcdir in $moddestdir. Steam dir: $appworkshopdir" && output_msg
-#  exit
+  #msg="Will install $modsrcdir in $moddestdir. Steam dir: $appworkshopdir" && output_msg
+  #exit
   msg="Installing Mod ID: $i for App ID: $appid in server: ${s}..." && output_msg
   if [ -f "$modsrcdir/mod.info" ]; then
     if [ -f "$modsrcdir/WindowsNoEditor/mod.info" ]; then
