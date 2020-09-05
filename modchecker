@@ -48,6 +48,7 @@ eval modid=\$"modid${count}"
    if [ -z "$installed" ] || [ "$online" != "$installed" ]; then
     msg="Installing $operation Mod ID: ${modid}..." && output_msg
     "${scriptpath}/modunpacker" "$appid" "$modid"
+   fi
   fi
  done
  let count=count+1
