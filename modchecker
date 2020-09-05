@@ -45,7 +45,9 @@ eval modid=\$"modid${count}"
    [ -z "$installed" ] && operation="updated" || operation="new"
    if [ -z "$installed" ] || [ "$online" != "$installed" ]; then
     msg="Installing $operation Mod ID: ${modid}..." && output_msg
-    "${scriptpath}/modunpacker" "$scriptname" "$appid" "$modid"
+    "${scriptpath}/modunpacker" "$scriptname" "$appid" "$modid" && \
+     [ "operation" = "updated" ] && \
+     msg="NOTICE: Updated Mod ID: $modid in server: $s \nYou might want to restart your server now!" && msg_output
    fi
   fi
  done

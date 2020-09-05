@@ -13,6 +13,7 @@ logs="${scriptpath}/logs"
 
 function output_msg {
  grep ^ERROR <<<"$msg" &>/dev/null && echo "$(date) - [App ID: $appid] - $msg" >> "${logs}/$(awk '{sub(/ /,""); print tolower($0)}' <<<$scriptname)-errors.txt"
+ grep ^NOTICE <<<"$msg" &>/dev/null && echo "$(date) - [App ID: $appid] - $msg" >> "${logs}/IMPORTANT_NOTICE.txt"
  echo -e "[${scriptname}] $msg"
 }
 
