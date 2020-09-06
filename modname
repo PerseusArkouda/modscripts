@@ -1,0 +1,14 @@
+#!/bin/bash
+# Find out quickly what's the name of a mod ID.
+# Accepts single or multiple mod IDs as arguments, separated by spaces or commas.
+
+#------- NO NEED TO EDIT ANYTHING -------
+modid=( $(sed 's/,/ /g' <<<"$*") )
+[ -z "$modid" ] && echo "ERROR: You need to provide mod ID(s) as arguments, separated by spaces or commas. Exiting." && exit 1
+
+for i in "${modid[@]}"; do
+ modname=$(curl -s -i -X POST -H "Content-Type:application/x-www-form-urlencoded" -d "itemcount=1" -d "publishedfileids[0]=${i}" \
+  'https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/?format=xml' | grep "<title>" | sed -e 's/<title>//g' -e 's/<\/title>//g' | xargs)
+ [ -z "$modname" ] && modname="N/A"
+ echo "[${i}] Mod name: ${modname}"
+done

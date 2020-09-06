@@ -37,6 +37,10 @@
 + This script is not meant to be used directly.
 + Contains shared functions for the rest of the scripts.
 
+#### modname
++ This script helps you find out quickly what's the name of mod ID(s).
++ Accepts single or multiple mod IDs as arguments, separated by spaces or commas.
++ It's optional and can work independently.
 
 ### Purpose of these scripts
 Some may wonder what's the reason of these scripts while there are others that do more.
