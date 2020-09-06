@@ -24,11 +24,11 @@ else
 fi
 
 msg="Up and running..." && output_msg
+echo
 
 # Downloading/validating the mods
 count=1
 for i in "${modid[@]}"; do
- msg="Downloading/validating Mod ID: $i" && output_msg
  "${scriptpath}/moddownloader" "$scriptname" "$appid" "$i"
  online=$(cut -d "!" -f 2 "${steaminstallation}/SteamApps/workshop/content/${appid}/${i}/modmeta.info" 2>/dev/null | tr -dc '[:alnum:]')
  eval online${count}="$online"
@@ -39,6 +39,7 @@ done
 totalmodids=$count
 
 # Comparing the downloaded mods with the installed and updating if needed
+echo
 count=1
 while [ $count -lt $totalmodids ]; do
 eval online=\$"online${count}"
@@ -48,11 +49,11 @@ eval modid=\$"modid${count}"
   if [ ! -z "$online" ]; then
    [ -z "$installed" ] && operation="new" || operation="updated"
    if [ -z "$installed" ] || [ "$online" != "$installed" ]; then
-    echo
-    msg="Installing $operation Mod ID: ${modid}..." && output_msg
     "${scriptpath}/modunpacker" "$scriptname" "$appid" "$modid"
-     [ "operation" = "updated" ] && \
-     msg="NOTICE: Updated Mod ID: $modid in server: $s \nYou might want to restart your server now!" && msg_output
+    [ "operation" = "updated" ] && \
+     msg="NOTICE: Updated $modname Mod ID: $modid in server: $s \nYou might want to restart your server now!" && output_msg
+   else
+    msg="Mod ID: $modid is up to date." && output_msg
    fi
   fi
  done

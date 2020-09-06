@@ -41,12 +41,14 @@ for i in "${modid[@]}"; do
  # sleep 1
  #done
  #echo
+ echo
+ msg="Checking Mod: $modname" && output_msg
  msg="Starting downloading/validating Mod ID: $i for App ID: ${appid}..." && output_msg
  count=0
  while true; do
   false
   get_mod &>/dev/null
-  [ "$?" -eq 0 ] && msg="Done." && output_msg && break
+  [ "$?" -eq 0 ] && break
   [ "$count" -ge 30 ] && msg="ERROR: Download attempts of $i reached the maximum limit of 30. Aborting." && output_msg && break
   [ "$?" -ne 0 ] && \
    msg="Something went wrong downloading the Mod ID: $i. Trying again... (Press ctrl+c to cancel)" && output_msg
@@ -54,7 +56,6 @@ for i in "${modid[@]}"; do
   let count=count+1
   sleep 2
  done
- echo
  [ ! -d "${steaminstallation}/SteamApps/workshop/content/${appid}/${i}" ] && msg="ERROR: Failed to download Mod ID: $i for App ID: ${appid}!" || \
-  msg="Mod ID: $i downloaded succesfully for App ID: $appid." && output_msg
+  msg="Mod downloaded succesfully." && output_msg
 done

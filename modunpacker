@@ -45,6 +45,8 @@ for s in "${server[@]}"; do
 # Uncomment to simulate mod installation to verify your settings.
   #msg="Will install $modsrcdir in $moddestdir. Steam dir: $appworkshopdir" && output_msg
   #exit
+  echo
+  msg="Preparing to install Mod: $modname" && output_msg
   msg="Installing Mod ID: $i for App ID: $appid in server: ${s}..." && output_msg
   if [ -f "$modsrcdir/mod.info" ]; then
     if [ -f "$modsrcdir/WindowsNoEditor/mod.info" ]; then
@@ -54,7 +56,7 @@ for s in "${server[@]}"; do
      output_msg
     fi
 
-    [ -d "$moddestdir" ] && msg="Found mod ID: $modid already installed. Reinstalling/Updating..." && output_msg && rm -rf "${moddestdir}*"
+    [ -d "$moddestdir" ] && msg="Found Mod ID: $modid already installed. Reinstalling/Updating..." && output_msg && rm -rf "${moddestdir}*"
 
     msg="Copying files to $moddestdir..." && output_msg
 
@@ -128,7 +130,7 @@ for s in "${server[@]}"; do
     else
       echo -ne '\x01\x00\x00\x00\x08\x00\x00\x00ModType\x00\x02\x00\x00\x001\x00' >>"${moddestdir}.mod"
     fi
-    msg="Installed Mod ID: $i for App ID: $appid in server: ${s}."
+    msg="Mod installed succesfully."
     output_msg
   else
    msg="ERROR: $modsrcdir/mod.info not found." && output_msg
