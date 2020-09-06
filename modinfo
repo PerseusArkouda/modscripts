@@ -1,0 +1,29 @@
+#!/bin/bash
+# Find out quickly some basic info of Mod ID(s).
+# Accepts single or multiple mod IDs as arguments, separated by spaces or commas.
+
+#------- NO NEED TO EDIT ANYTHING -------
+function bytesToHuman {
+    b=${1:-0}; d=''; s=0; S=(Bytes {K,M,G,T,P,E,Z,Y}B)
+    while ((b > 1024)); do
+        d="$(printf ".%02d" $((b % 1024 * 100 / 1024)))"
+        b=$((b / 1024))
+        let s++
+    done
+    echo "$b$d${S[$s]}"
+}
+
+modid=( $(sed 's/,/ /g' <<<"$*") )
+[ -z "$modid" ] && echo "ERROR: You need to provide mod ID(s) as arguments, separated by spaces or commas. Exiting." && exit 1
+
+for i in "${modid[@]}"; do
+ mod=$(curl -s -i -X POST -H "Content-Type:application/x-www-form-urlencoded" -d "itemcount=1" -d "publishedfileids[0]=${i}" \
+  'https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/?format=xml')
+ modname=$(grep "<title>" <<<"$mod" | sed -e 's/<title>//g' -e 's/<\/title>//g' | xargs)
+ modsize=$(grep "<file_size>" <<<"$mod" | sed -e 's/<file_size>//g' -e 's/<\/file_size>//g' | xargs)
+ modsize=$(bytesToHuman "$modsize")
+ appid=$(grep "<consumer_app_id>" <<<"$mod" | sed -e 's/<consumer_app_id>//g' -e 's/<\/consumer_app_id>//g' | xargs)
+ modinfo="[App ID: $appid] [Mod ID: ${i}] Mod name: $modname [${modsize}]"
+ [ -z "$modname" ] && modinfo="[Mod ID: ${i}] Mod name: N/A"
+ echo "$modinfo"
+done
