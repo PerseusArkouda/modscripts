@@ -23,7 +23,7 @@ for i in "${modid[@]}"; do
  modsize=$(grep "<file_size>" <<<"$mod" | sed -e 's/<file_size>//g' -e 's/<\/file_size>//g' | xargs)
  modsize=$(bytesToHuman "$modsize")
  appid=$(grep "<consumer_app_id>" <<<"$mod" | sed -e 's/<consumer_app_id>//g' -e 's/<\/consumer_app_id>//g' | xargs)
- modinfo="[App ID: $appid] [Mod ID: ${i}] Mod name: $modname [${modsize}]"
+ modinfo="[App ID: ${appid}] [Mod ID: ${i}] Mod name: $modname [${modsize}]"
  [ -z "$modname" ] && modinfo="[Mod ID: ${i}] Mod name: N/A"
  echo "$modinfo"
 done

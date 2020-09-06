@@ -1,6 +1,6 @@
 #!/bin/bash
 # # This script downloads mods from Steam's workshop with steamcmd.
-# # You can either run with arguments: ./moddownloader appid modid1 modid2 modid3 (etc...) or by setting up mods.conf.
+# # You can either run with arguments: ./moddownloader appid modid1,modid2,modid3 (etc...) or by setting up mods.conf.
 # # Requires steamcmd installed.
 # # Will resume if download is interrupted until it succeeds (max limit 30 attempts).
 

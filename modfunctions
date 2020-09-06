@@ -26,13 +26,13 @@ scriptname="$1"
 [ -z "$3" ] && [ ! -f "${scriptpath}/mods.conf" ] && \
  msg="ERROR: Syntax is wrong. Mod ID(s) is missing. Exiting." && output_msg && exit 1
 [ ! -z "$2" ] && appid="$2"
-[ ! -z "$3" ] && modid=( $(echo "$*" | sed "s/$appid //g" | tr -d '[:alpha:]') )
+[ ! -z "$3" ] && modid=( $(echo "$*" | sed -e "s/$appid //g" -e "s/,/ /g" | tr -d '[:alpha:]') )
 conf="${scriptpath}/mods.conf"
 if [ -z "$2" ] && [ -f "$conf" ]; then
  eval steaminstallation=$(grep "^steaminstallation" "$conf" | grep -v "#" | cut -d "=" -f 2)
  appid=$(grep "^appid" "$conf" | cut -d "=" -f 2)
- modid=( $(grep "^modid" "$conf" | cut -d "=" -f 2) )
- eval server=( $(grep "^server" "$conf" | cut -d "=" -f 2) )
+ modid=( $(grep "^modid" "$conf" | cut -d "=" -f 2 | sed 's/,/ /g') )
+ eval server=( $(grep "^server" "$conf" | cut -d "=" -f 2 | sed "s/,/ /g") )
  steamcmd=$(grep "^steamcmd" "$conf" | cut -d "=" -f 2)
 fi
 [ -z "$steamcmd" ] && [ -f "$conf" ] && eval steamcmd=$(grep "^steamcmd" "$conf" | cut -d "=" -f 2)

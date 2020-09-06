@@ -9,7 +9,7 @@
 #   steamcmd won't let it run a new process while the previous one still running.
 # # Requires both moddownloader and modunpacker scripts to work.
 # # Errors are logged unders logs dir.
-# # You can either run with arguments: ./modchecker appid modid1 modid2 modid3 (etc...) or by setting up mods.conf.
+# # You can either run with arguments: ./modchecker appid modid1,modid2,modid3 (etc...) or by setting up mods.conf.
 
 # ---------- NO NEED TO EDIT BELOW -----------
 
