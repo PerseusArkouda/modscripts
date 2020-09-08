@@ -1,9 +1,9 @@
 # modscripts
 
 ### Scripts to manage Steam's workshop mods from Linux console. 
-+ moddownloader and modunpacker can run independently.  
++ moddownloader, modunpacker and modremover can run independently.  
 *modfunctions must be present as it holds shared functions for all the scripts.*
-+ modchecker requires both of the above.
++ modchecker requires moddownload and modunpacker.
 + You can either run with arguments: ./scriptname appid modid1,modid2,modid3 (etc...) or by setting up mods.conf.
   (supports modid separation both with spaces or commas)
 + If you use them without mods.conf, define the correct path variables at the top of the scripts.
@@ -21,6 +21,9 @@
 #### modunpacker 
 + Script to install directly downloaded mods from Steam's workshop to the game.
 + Uses modified code from ark_update.sh: https://github.com/Nexolight/ark_xposed
+
+#### modremover
++ Script to uninstall Mod ID(s) from Steam installation and the defined servers.
 
 #### modchecker
 + This script can be scheduled to run daily (or whatever) and validate all defined mods.

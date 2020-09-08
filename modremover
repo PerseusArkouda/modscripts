@@ -1,0 +1,76 @@
+#!/bin/bash
+# # This script will uninstall Mod ID(s) from Steam installation the defined servers here or in mods.conf
+# # You can either run with arguments: ./modremover appid modid1,modid2,modid3 (etc...) or
+#   by setting up mods.conf.
+
+# Will be overriden if you setup the mods.conf
+# Example: steaminstallation="${HOME}/.steam"
+steaminstallation=""
+# Example: server=( \
+# "${HOME}/server8" \
+# "${HOME}/server6" \
+# )
+server=( \
+"" \
+)
+# Example: modsdir="ShooterGame/Content/Mods"
+modsdir=""
+
+
+
+# ---------- NO NEED TO EDIT BELOW -----------
+
+# Getting the variables from modfunctions
+scriptname="Mod Remover"
+if [ ! -z "$*" ]; then
+ if ! grep ^Mod <<<"$*" &>/dev/null; then
+  [ -z "$steaminstallation" ] && echo -e "ERROR: steaminstallation variable cannot be empty when script is used independently with arguments!\
+  \nOpen $scriptname and set the correct paths at the top of the script. Exiting." && exit 1
+  [ -z "$server" ] && echo -e "ERROR: server array variable(s) cannot be empty when script is used independently with arguments!\
+  \nOpen $scriptname and set the correct paths at the top of the script. Exiting." && exit 1
+  [ -z "$modsdir" ] && echo -e "ERROR: modsdir variable cannot be empty when script is used independently with arguments!\
+  \nOpen $scriptname and set the correct paths at the top of the script. Exiting." && exit 1
+ fi
+ appid=$(echo "$*" | tr -d '[:alpha:]' | awk '{print $1}')
+ modid=( $(echo "$*" | sed "s/$appid //g" | tr -d '[:alpha:]') )
+ . $(dirname "$0")/modfunctions "$scriptname" "$appid" "${modid[@]}"
+else
+ . $(dirname "$0")/modfunctions "$scriptname"
+fi
+
+for i in "${modid[@]}"; do
+ steammodpath="${steaminstallation}/SteamApps/workshop/content/${appid}/${i}"
+ if [ ! -d "$steammodpath" ]; then
+  msg="WARNING: Mod ID: $i for App ID: $appid not found in $steammodpath. Ignoring." && output_msg
+ else
+  modname=$(curl -s -i -X POST -H "Content-Type:application/x-www-form-urlencoded" -d "itemcount=1" -d "publishedfileids[0]=${i}" \
+   'https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/?format=xml' | grep "<title>" | sed -e 's/<title>//g' -e 's/<\/title>//g' | xargs)
+  [ -z "$modname" ] && modname="N/A"
+  echo
+  read -rp "Are you sure you want to remove Mod ID: $i Mod: ${modname}? (Y/n): " "confirm"
+   [[ "$confirm" = "N" || "$confirm" = "n" ]] && msg="Cancelled. Exiting." && output_msg && exit 1
+  printf "Removing Mod ID: $i from App ID: ${appid}..."
+  rm -rf "$steammodpath"
+   [ "$?" -eq 0 ] && echo "Done." || errors=1
+ fi
+done
+
+ for s in "${server[@]}"; do
+ echo
+ msg="Checking in ${s}..." && output_msg
+  for i in "${modid[@]}"; do
+  gamemodpath="${s}/${modsdir}/${i}"
+  if [ ! -d "$gamemodpath" ]; then
+   msg="WARNING: Mod ID: $i not found in $gamemodpath. Ignoring." && output_msg
+  else
+   sleep 0.2
+   printf "Removing Mod ID: $i from ${gamemodpath}..."
+   rm -rf "$gamemodpath" "${gamemodpath}.mod"
+    [ "$?" -eq 0 ] && echo "Done." || errors=1
+  fi
+ done
+done
+
+echo
+[ ! -z "$errors" ] && msg="Script finished but errors were detected." || msg="Script finished." && output_msg
+

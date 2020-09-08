@@ -49,6 +49,9 @@ for s in "${server[@]}"; do
 # Uncomment to simulate mod installation to verify your settings.
   #msg="Will install $modsrcdir in $moddestdir. Steam dir: $appworkshopdir" && output_msg
   #exit
+  modname=$(curl -s -i -X POST -H "Content-Type:application/x-www-form-urlencoded" -d "itemcount=1" -d "publishedfileids[0]=${i}" \
+   'https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/?format=xml' | grep "<title>" | sed -e 's/<title>//g' -e 's/<\/title>//g' | xargs)
+  [ -z "$modname" ] && modname="N/A"
   echo
   msg="Preparing to install Mod: $modname" && output_msg
   msg="Installing Mod ID: $i for App ID: $appid in server: ${s}..." && output_msg
