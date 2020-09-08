@@ -33,11 +33,13 @@ if [ -z "$2" ] && [ -f "$conf" ]; then
  appid=$(grep "^appid" "$conf" | cut -d "=" -f 2)
  modid=( $(grep "^modid" "$conf" | cut -d "=" -f 2 | sed 's/,/ /g') )
  eval server=( $(grep "^server" "$conf" | cut -d "=" -f 2 | sed "s/,/ /g") )
- steamcmd=$(grep "^steamcmd" "$conf" | cut -d "=" -f 2)
+ eval steamcmd=$(grep "^steamcmd" "$conf" | cut -d "=" -f 2)
+ eval modsdir=$(grep "^modsdir" "$conf" | cut -d "=" -f 2)
 fi
 [ -z "$steamcmd" ] && [ -f "$conf" ] && eval steamcmd=$(grep "^steamcmd" "$conf" | cut -d "=" -f 2)
 [ -z "$steaminstallation" ] && [ -f "$conf" ] && eval steaminstallation=$(grep "^steaminstallation" "$conf" | grep -v "#" | cut -d "=" -f 2)
 [ -z "$server" ] && [ -f "$conf" ] && eval server=( $(grep "^server" "$conf" | cut -d "=" -f 2) )
+[ -z "$modsdir" ] && [ -f "$conf" ] && eval modsdir=$(grep "^modsdir" "$conf" | cut -d "=" -f 2)
 
 modname=$(curl -s -i -X POST -H "Content-Type:application/x-www-form-urlencoded" -d "itemcount=1" -d "publishedfileids[0]=${modid}" \
  'https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/?format=xml' | grep "<title>" | sed -e 's/<title>//g' -e 's/<\/title>//g' | xargs)
@@ -46,11 +48,16 @@ modname=$(curl -s -i -X POST -H "Content-Type:application/x-www-form-urlencoded"
 # Error handling
 [ -z "$appid" ] && msg="ERROR: App ID is not set. Exiting." && output_msg && exit 1
 [ "$scriptname" != "Mod Checker" ] && [ "$scriptname" != "Mod Downloader" ] && [ -z "$server" ] && msg="ERROR: Server(s) path is not set. Exiting." && output_msg && exit 1
-[ -z "$server" ] && msg="ERROR: Mod ID(s) is not set. Exiting." && output_msg && exit 1
+[ -z "$modid" ] && msg="ERROR: Mod ID(s) is not set. Exiting." && output_msg && exit 1
 [ "$scriptname" != "Mod Checker" ] && [ "$scriptname" = "Mod Downloader" ] && [ -z "$steamcmd" ] && msg="ERROR: steamcmd path is not set. Exiting." && output_msg && exit 1
 [ "$scriptname" != "Mod Checker" ] && [ -z "$steaminstallation" ] && msg="ERROR: Steam installation path is not set. Exiting." && output_msg && exit 1
 [ "$scriptname" = "Mod Checker" ] && [ ! -f "${scriptpath}/moddownloader" ] && msg="ERROR: moddownloader script now found. Exiting." && output_msg && exit 1
 [ "$scriptname" = "Mod Checker" ] && [ ! -f "${scriptpath}/modunpacker" ] && msg="ERROR: modunpacker script now found. Exiting." && output_msg && exit 1
+[ "$scriptname" != "Mod Downloader" ] && [ -z "$modsdir" ] && msg="ERROR: Mods installation path is not set. Exiting." && output_msg && exit 1
+
+# Validating appid
+appidcheck=$(curl -s "https://steamdb.info/app/${appid}/" | grep "No app was found matching this AppID\|The page you requested was not found")
+[ ! -z "$appidcheck" ] && msg="ERROR: App ID: $appid doesn't exist. Make sure the syntax of the command is correct. Exiting." && output_msg && exit 1
 
 # Uncomment to debug
 #msg="Steam installation: $steaminstallation \nSteamcmd: $steamcmd \nApp ID: $appid \nServers: ${server[@]} \nMod IDs: ${modid[@]}" && output_msg

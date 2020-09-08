@@ -1,7 +1,7 @@
 #!/bin/bash
 # # This script will install directly downloaded mods from Steam's workshop to the game.
 # # Uses modified code from ark_update.sh: https://github.com/Nexolight/ark_xposed
-# # You can either run with arguments: ./modchecker appid modid1,modid2,modid3 (etc...) or by setting up mods.conf.
+# # You can either run with arguments: ./modunpacker appid modid1,modid2,modid3 (etc...) or by setting up mods.conf.
 
 # If mods.conf doesn't exist, set below the correct paths
 # Will be overriden if you setup the mods.conf
@@ -14,6 +14,10 @@ steaminstallation=""
 server=( \
 "" \
 )
+# Example: modsdir="ShooterGame/Content/Mods"
+modsdir=""
+
+
 
 # ---------- NO NEED TO EDIT BELOW -----------
 
@@ -41,7 +45,7 @@ function extract_mod {
 for s in "${server[@]}"; do
  for i in "${modid[@]}"; do
   modsrcdir="${appworkshopdir}/${i}"
-  moddestdir="${s}/ShooterGame/Content/Mods/${i}"
+  moddestdir="${s}/${modsdir}/${i}"
 # Uncomment to simulate mod installation to verify your settings.
   #msg="Will install $modsrcdir in $moddestdir. Steam dir: $appworkshopdir" && output_msg
   #exit
