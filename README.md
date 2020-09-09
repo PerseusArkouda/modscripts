@@ -25,6 +25,11 @@
 #### modremover
 + Script to uninstall Mod ID(s) from Steam installation and the defined servers.
 
+### modinfo
++ Find out quickly some basic info of Mod ID(s).
++ Accepts single or multiple mod IDs as arguments, separated by spaces or commas.
++ Works for your defined mods in mods.conf without arguments.
+
 #### modchecker
 + This script can be scheduled to run daily (or whatever) and validate all defined mods.
    Then it will verify if the downloaded mods (after validation) contain updates and it will update if needed.

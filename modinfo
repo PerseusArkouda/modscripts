@@ -1,7 +1,7 @@
 #!/bin/bash
 # Find out quickly some basic info of Mod ID(s).
 # Accepts single or multiple mod IDs as arguments, separated by spaces or commas.
-
+# Works for your defined mods in mods.conf without arguments.
 
 
 # ---------- NO NEED TO EDIT BELOW -----------
