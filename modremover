@@ -1,5 +1,6 @@
 #!/bin/bash
-# # This script will uninstall Mod ID(s) from Steam installation the defined servers here or in mods.conf
+# # This script will uninstall Mod ID(s) from the defined servers here or in mods.conf
+#   given as arguments.
 # # You can either run with arguments: ./modremover appid modid1,modid2,modid3 (etc...) or
 #   by setting up mods.conf.
 
@@ -32,7 +33,7 @@ if [ ! -z "$*" ]; then
   \nOpen $scriptname and set the correct paths at the top of the script. Exiting." && exit 1
  fi
  appid=$(echo "$*" | tr -d '[:alpha:]' | awk '{print $1}')
- modid=( $(echo "$*" | sed "s/$appid //g" | tr -d '[:alpha:]') )
+ modid=( $(echo "$*" | sed -e "s/$appid //g" -e "s/,/ /g" | tr -d '[:alpha:]') )
  . $(dirname "$0")/modfunctions "$scriptname" "$appid" "${modid[@]}"
 else
  . $(dirname "$0")/modfunctions "$scriptname"

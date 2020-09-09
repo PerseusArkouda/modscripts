@@ -2,7 +2,27 @@
 # Find out quickly some basic info of Mod ID(s).
 # Accepts single or multiple mod IDs as arguments, separated by spaces or commas.
 
-#------- NO NEED TO EDIT ANYTHING -------
+
+
+# ---------- NO NEED TO EDIT BELOW -----------
+
+# Getting the variables from modfunctions if needed
+scriptname="Mod Info"
+if [ ! -z "$*" ]; then
+ modid=( $(echo "$*" | sed "s/,/ /g" | tr -d '[:alpha:]') )
+ . $(dirname "$0")/modfunctions "$scriptname" "$appid" "${modid[@]}"
+elif [ -z "$*" ]; then
+ . $(dirname "$0")/modfunctions "$scriptname"
+fi
+
+function discord_msg {
+ #token=$(cat "$workfile" | grep "token1:" | awk '{print $2}')
+ #url="https://discordapp.com/api/webhooks/$token"
+ #curl -X POST -d "content"=">>> $discordmsg" "$url"
+ curl -X POST -d "content"="$discordmsg" 'https://discordapp.com/api/webhooks/649579873798455306/L2L-1UaZ9VTt9PwxzLaywpuuXLskRN9dVGw4RCfsw-yCJOcCdSyDFmO98mxbQcOPD9dJ'
+ sleep 0.1
+}
+
 function bytesToHuman {
     b=${1:-0}; d=''; s=0; S=(Bytes {K,M,G,T,P,E,Z,Y}B)
     while ((b > 1024)); do
@@ -12,9 +32,6 @@ function bytesToHuman {
     done
     echo "$b$d${S[$s]}"
 }
-
-modid=( $(sed 's/,/ /g' <<<"$*") )
-[ -z "$modid" ] && echo "ERROR: You need to provide mod ID(s) as arguments, separated by spaces or commas. Exiting." && exit 1
 
 for i in "${modid[@]}"; do
  mod=$(curl -s -i -X POST -H "Content-Type:application/x-www-form-urlencoded" -d "itemcount=1" -d "publishedfileids[0]=${i}" \

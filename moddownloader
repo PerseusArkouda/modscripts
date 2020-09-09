@@ -23,7 +23,7 @@ if [ ! -z "$*" ]; then
   \nOpen $scriptname and set the correct paths at the top of the script. Exiting." && exit 1
  fi
  appid=$(echo "$*" | tr -d '[:alpha:]' | awk '{print $1}')
- modid=( $(echo "$*" | sed "s/$appid //g") )
+ modid=( $(echo "$*" | sed -e "s/$appid //g" -e "s/,/ /g" | tr -d '[:alpha:]') )
  . $(dirname "$0")/modfunctions "$scriptname" "$appid" "${modid[@]}"
 elif [ -z "$*" ]; then
  . $(dirname "$0")/modfunctions "$scriptname"
