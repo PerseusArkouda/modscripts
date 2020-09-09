@@ -6,12 +6,17 @@
 
 # ---------- NO NEED TO EDIT BELOW -----------
 
+script=$(realpath "$0")
+scriptpath=$(dirname "$script")
+logs="${scriptpath}/logs"
+[ ! -d "$logs" ] && mkdir "$logs"
+
 # Getting the variables from modfunctions if needed
 scriptname="Mod Info"
 if [ ! -z "$*" ]; then
  modid=( $(echo "$*" | sed "s/,/ /g" | tr -d '[:alpha:]') )
- . $(dirname "$0")/modfunctions "$scriptname" "$appid" "${modid[@]}"
 elif [ -z "$*" ]; then
+ [ ! -f "${scriptpath}/mods.conf" ] && echo "ERROR: You can use this $scriptname without arguments if you don't have a mods.conf setup. Exiting." && exit 1
  . $(dirname "$0")/modfunctions "$scriptname"
 fi
 
