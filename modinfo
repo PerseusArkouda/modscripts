@@ -20,14 +20,6 @@ elif [ -z "$*" ]; then
  . $(dirname "$0")/modfunctions "$scriptname"
 fi
 
-function discord_msg {
- #token=$(cat "$workfile" | grep "token1:" | awk '{print $2}')
- #url="https://discordapp.com/api/webhooks/$token"
- #curl -X POST -d "content"=">>> $discordmsg" "$url"
- curl -X POST -d "content"="$discordmsg" 'https://discordapp.com/api/webhooks/649579873798455306/L2L-1UaZ9VTt9PwxzLaywpuuXLskRN9dVGw4RCfsw-yCJOcCdSyDFmO98mxbQcOPD9dJ'
- sleep 0.1
-}
-
 function bytesToHuman {
     b=${1:-0}; d=''; s=0; S=(Bytes {K,M,G,T,P,E,Z,Y}B)
     while ((b > 1024)); do
