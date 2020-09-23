@@ -46,8 +46,8 @@ eval online=\$"online${count}"
 eval modid=\$"modid${count}"
  for s in "${server[@]}"; do
   installed="${s}/${modsdir}/${modid}/mod.info"
-  comparemods=$(diff "$online" "$installed" 2>/dev/null)
-  if [ ! -z "$comparemods" ]; then
+  [ -f "$installed" ] && comparemods=$(diff "$online" "$installed" 2>/dev/null)
+  if [ ! -z "$comparemods" ] || [ ! -f "$installed" ]; then
    [ ! -f "$installed" ] && operation="new" || operation="updated"
    "${scriptpath}/modunpacker" "$scriptname" "$appid" "$modid"
    [ "$operation" = "updated" ] && \
