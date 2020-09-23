@@ -4,7 +4,8 @@
 # # You can either run with arguments: ./modremover appid modid1,modid2,modid3 (etc...) or
 #   by setting up mods.conf.
 
-# Will be overriden if you setup the mods.conf
+# You have to set the values below only if you want to use this script independently.
+# They will be overriden if you setup the mods.conf
 # Example: steaminstallation="${HOME}/.steam"
 steaminstallation=""
 # Example: server=( \

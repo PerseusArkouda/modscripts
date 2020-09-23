@@ -3,8 +3,8 @@
 # # Uses modified code from ark_update.sh: https://github.com/Nexolight/ark_xposed
 # # You can either run with arguments: ./modunpacker appid modid1,modid2,modid3 (etc...) or by setting up mods.conf.
 
-# If mods.conf doesn't exist, set below the correct paths
-# Will be overriden if you setup the mods.conf
+# You have to set the values below only if you want to use this script independently.
+# They will be overriden if you setup the mods.conf
 # Example: steaminstallation="${HOME}/.steam"
 steaminstallation=""
 # Example: server=( \
@@ -24,14 +24,20 @@ modsdir=""
 # Getting the variables from modfunctions
 scriptname="Mod Unpacker"
 if [ ! -z "$*" ]; then
- if ! grep ^Mod <<<"$*" &>/dev/null; then
+ if ! grep -q ^Mod <<<"$*"; then
   [ -z "$steaminstallation" ] && echo -e "ERROR: steaminstallation variable cannot be empty when script is used independently with arguments!\
   \nOpen $scriptname and set the correct paths at the top of the script. Exiting." && exit 1
   [ -z "$server" ] && echo -e "ERROR: server array variable(s) cannot be empty when script is used independently with arguments!\
   \nOpen $scriptname and set the correct paths at the top of the script. Exiting." && exit 1
  fi
- appid=$(echo "$*" | tr -d '[:alpha:]' | awk '{print $1}')
- modid=( $(echo "$*" | sed -e "s/$appid //g" -e "s/,/ /g" | tr -d '[:alpha:]') )
+ if grep -q server <<<"$*"; then
+  server=( $(echo "$*" | cut -d ":" -f 2 | awk '{print $1}') )
+  appid=$(echo "$*" | cut -d ":" -f 3 | awk '{print $1}')
+  modid=( $(echo "$*" | cut -d ":" -f 3 | awk '{print $2}' | sed 's/,/ /g') )
+ else
+  appid=$(echo "$*" | tr -d '[:alpha:]' | awk '{print $1}')
+  modid=( $(echo "$*" | sed -e "s/$appid //g" -e "s/,/ /g" | tr -d '[:alpha:]') )
+ fi
  . $(dirname "$0")/modfunctions "$scriptname" "$appid" "${modid[@]}"
 else
  . $(dirname "$0")/modfunctions "$scriptname"
@@ -46,13 +52,12 @@ for s in "${server[@]}"; do
  for i in "${modid[@]}"; do
   modsrcdir="${appworkshopdir}/${i}"
   moddestdir="${s}/${modsdir}/${i}"
-# Uncomment to simulate mod installation to verify your settings.
-  #msg="Will install $modsrcdir in $moddestdir. Steam dir: $appworkshopdir" && output_msg
+# Uncomment below to simulate mod installation to verify your settings.
+  #msg="Will install $modsrcdir in $moddestdir." && output_msg
   #exit
-  modname=$(curl -s -i -X POST -H "Content-Type:application/x-www-form-urlencoded" -d "itemcount=1" -d "publishedfileids[0]=${i}" \
+  [ -z "$modname" ] && modname=$(curl -s -i -X POST -H "Content-Type:application/x-www-form-urlencoded" -d "itemcount=1" -d "publishedfileids[0]=${i}" \
    'https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/?format=xml' | grep "<title>" | sed -e 's/<title>//g' -e 's/<\/title>//g' | xargs)
   [ -z "$modname" ] && modname="N/A"
-  echo
   msg="Preparing to install Mod: $modname" && output_msg
   msg="Installing Mod ID: $i for App ID: $appid in server: ${s}..." && output_msg
   if [ -f "$modsrcdir/mod.info" ]; then

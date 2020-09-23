@@ -32,13 +32,13 @@ if [ -z "$2" ] && [ -f "$conf" ]; then
  eval steaminstallation=$(grep "^steaminstallation" "$conf" | grep -v "#" | cut -d "=" -f 2)
  appid=$(grep "^appid" "$conf" | cut -d "=" -f 2)
  modid=( $(grep "^modid" "$conf" | cut -d "=" -f 2 | sed 's/,/ /g') )
- eval server=( $(grep "^server" "$conf" | cut -d "=" -f 2 | sed "s/,/ /g") )
+ eval server=( $(grep "^server" "$conf" | cut -d "=" -f 2 | sed 's/,/ /g') )
  eval steamcmd=$(grep "^steamcmd" "$conf" | cut -d "=" -f 2)
  eval modsdir=$(grep "^modsdir" "$conf" | cut -d "=" -f 2)
 fi
 [ -z "$steamcmd" ] && [ -f "$conf" ] && eval steamcmd=$(grep "^steamcmd" "$conf" | cut -d "=" -f 2)
 [ -z "$steaminstallation" ] && [ -f "$conf" ] && eval steaminstallation=$(grep "^steaminstallation" "$conf" | grep -v "#" | cut -d "=" -f 2)
-[ -z "$server" ] && [ -f "$conf" ] && eval server=( $(grep "^server" "$conf" | cut -d "=" -f 2) )
+[ -z "$server" ] && [ -f "$conf" ] && eval server=( $(grep "^server" "$conf" | cut -d "=" -f 2 | sed 's/,/ /g') )
 [ -z "$modsdir" ] && [ -f "$conf" ] && eval modsdir=$(grep "^modsdir" "$conf" | cut -d "=" -f 2)
 
 # Error handling

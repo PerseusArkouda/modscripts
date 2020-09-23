@@ -4,8 +4,8 @@
 # # Requires steamcmd installed.
 # # Will resume if download is interrupted until it succeeds (max limit 30 attempts).
 
-# If mods.conf doesn't exist, set below the correct paths
-# Will be overriden if you setup the mods.conf
+# You have to set the values below only if you want to use this script independently.
+# They will be overriden if you setup the mods.conf
 #Example: steamcmd="${HOME}"
 steamcmd=""
 #Example: steaminstallation="${HOME}/.steam"
