@@ -23,13 +23,6 @@ else
  . $(dirname "$0")/modfunctions "$scriptname"
 fi
 
-# Function to get Mod's name
-function get_modname {
- modname=$(curl -s -i -X POST -H "Content-Type:application/x-www-form-urlencoded" -d "itemcount=1" -d "publishedfileids[0]=${modid}" \
-  'https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/?format=xml' | grep "<title>" | sed -e 's/<title>//g' -e 's/<\/title>//g' | xargs)
- [ -z "$modname" ] && modname="N/A"
-}
-
 msg="Up and running..." && output_msg
 echo
 
@@ -50,6 +43,9 @@ count=1
 while [ $count -lt $totalmodids ]; do
  eval online=\$"online${count}"
  eval modid=\$"modid${count}"
+ modname=$(curl -s -i -X POST -H "Content-Type:application/x-www-form-urlencoded" -d "itemcount=1" -d "publishedfileids[0]=${modid}" \
+  'https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/?format=xml' | grep "<title>" | sed -e 's/<title>//g' -e 's/<\/title>//g' | xargs)
+ [ -z "$modname" ] && modname="N/A"
  echo
  for s in "${server[@]}"; do
   installed="${s}/${modsdir}/${modid}/mod.info"
@@ -59,9 +55,9 @@ while [ $count -lt $totalmodids ]; do
    "${scriptpath}/modunpacker" "$scriptname" "server:${s}:" "$appid" "$modid"
    [ "$?" -ne 0 ] && msg="ERROR: Mod Unpacker failed to install Mod ID: $modid" && output_msg
    [ "$operation" = "updated" ] && \
-    get_modname ; msg="NOTICE: Updated $modname Mod ID: $modid in server: ${s}. You might want to restart your server now!" && output_msg
+    msg="NOTICE: Updated $modname Mod ID: $modid in server: ${s}. You might want to restart your server now!" && output_msg
   else
-   get_modname ; msg="Mod: $modname is up to date in ${s}/${modsdir}/${modid}." && output_msg
+   msg="Mod: $modname is up to date in ${s}/${modsdir}/${modid}." && output_msg
   fi
  done
  let count=count+1
