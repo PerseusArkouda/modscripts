@@ -57,6 +57,7 @@ while [ $count -lt $totalmodids ]; do
   if [ ! -z "$comparemods" ] || [ ! -f "$installed" ]; then
    [ ! -f "$installed" ] && operation="new" || operation="updated"
    "${scriptpath}/modunpacker" "$scriptname" "server:${s}:" "$appid" "$modid"
+   [ "$?" -ne 0 ] && msg="ERROR: Mod Unpacker failed to install Mod ID: $modid" && output_msg
    [ "$operation" = "updated" ] && \
     get_modname ; msg="NOTICE: Updated $modname Mod ID: $modid in server: ${s}. You might want to restart your server now!" && output_msg
   else

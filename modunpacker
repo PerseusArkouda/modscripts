@@ -66,6 +66,7 @@ for s in "${server[@]}"; do
     else
      msg="ERROR: $modsrcdir/WindowsNoEditor not found. Possibly corrupted mod download. Try to download again."
      output_msg
+     exit 1
     fi
 
     [ -d "$moddestdir" ] && msg="Found Mod ID: $modid already installed. Reinstalling/Updating..." && output_msg && rm -rf "${moddestdir}*"
@@ -145,7 +146,7 @@ for s in "${server[@]}"; do
     msg="Mod installed succesfully."
     output_msg
   else
-   msg="ERROR: $modsrcdir/mod.info not found." && output_msg
+   msg="ERROR: $modsrcdir/mod.info not found." && output_msg && exit 1
   fi
  done
 done
