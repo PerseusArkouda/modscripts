@@ -69,7 +69,7 @@ for s in "${server[@]}"; do
      exit 1
     fi
 
-    [ -d "$moddestdir" ] && msg="Found Mod ID: $modid already installed. Reinstalling/Updating..." && output_msg && rm -rf "${moddestdir}*"
+    [ -d "$moddestdir" ] && msg="Found Mod ID: $modid already installed. Reinstalling/Updating..." && output_msg && rm -rf "$moddestdir" && rm -rf "${moddestdir}.mod"
 
     msg="Copying files to $moddestdir..." && output_msg
 
