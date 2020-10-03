@@ -44,7 +44,7 @@ while [ $count -lt $totalmodids ]; do
  eval online=\$"online${count}"
  eval modid=\$"modid${count}"
  modname=$(curl -s -i -X POST -H "Content-Type:application/x-www-form-urlencoded" -d "itemcount=1" -d "publishedfileids[0]=${modid}" \
-  'https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/?format=xml' | grep "<title>" | sed -e 's/<title>//g' -e 's/<\/title>//g' | xargs)
+  'https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/?format=xml' | grep "<title>" | sed -e 's/<title>//g' -e 's/<\/title>//g' -e "s/&apos;/'/g" | awk 'gsub("\t",""); {pring $0}')
  [ -z "$modname" ] && modname="N/A"
  echo
  for s in "${server[@]}"; do

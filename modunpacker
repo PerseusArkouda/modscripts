@@ -56,7 +56,7 @@ for s in "${server[@]}"; do
   #msg="Will install $modsrcdir in $moddestdir." && output_msg
   #exit
   modname=$(curl -s -i -X POST -H "Content-Type:application/x-www-form-urlencoded" -d "itemcount=1" -d "publishedfileids[0]=${i}" \
-   'https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/?format=xml' | grep "<title>" | sed -e 's/<title>//g' -e 's/<\/title>//g' | xargs)
+   'https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/?format=xml' | grep "<title>" | sed -e 's/<title>//g' -e 's/<\/title>//g' -e "s/&apos;/'/g" | awk 'gsub("\t",""); {pring $0}')
   [ -z "$modname" ] && modname="N/A"
   msg="Preparing to install Mod: $modname" && output_msg
   msg="Installing Mod ID: $i for App ID: $appid in server: ${s}..." && output_msg

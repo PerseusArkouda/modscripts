@@ -46,7 +46,7 @@ for i in "${modid[@]}"; do
   msg="WARNING: Mod ID: $i for App ID: $appid not found in $steammodpath. Ignoring." && output_msg
  else
   modname=$(curl -s -i -X POST -H "Content-Type:application/x-www-form-urlencoded" -d "itemcount=1" -d "publishedfileids[0]=${i}" \
-   'https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/?format=xml' | grep "<title>" | sed -e 's/<title>//g' -e 's/<\/title>//g' | xargs)
+   'https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/?format=xml' | grep "<title>" | sed -e 's/<title>//g' -e 's/<\/title>//g' -e "s/&apos;/'/g" | awk 'gsub("\t",""); {pring $0}')
   [ -z "$modname" ] && modname="N/A"
   echo
   read -rp "Are you sure you want to remove Mod ID: $i Mod: ${modname}? (Y/n): " "confirm"
