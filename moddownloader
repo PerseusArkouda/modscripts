@@ -59,6 +59,6 @@ for i in "${modid[@]}"; do
   let count=count+1
   sleep 2
  done
- [ ! -d "${steaminstallation}/SteamApps/workshop/content/${appid}/${i}" ] && msg="ERROR: Failed to download Mod ID: $i for App ID: ${appid}!" || \
+ [ ! -d "${steaminstallation}/steamapps/workshop/content/${appid}/${i}" ] && msg="ERROR: Failed to download Mod ID: $i for App ID: ${appid}!" || \
   msg="Mod downloaded succesfully." && output_msg
 done

@@ -44,7 +44,7 @@ else
 fi
 
 # Starting installation of mods and replacing if already exist
-appworkshopdir="${steaminstallation}/SteamApps/workshop/content/${appid}"
+appworkshopdir="${steaminstallation}/steamapps/workshop/content/${appid}"
 
 function extract_mod {
 

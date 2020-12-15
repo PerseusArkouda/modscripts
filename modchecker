@@ -30,7 +30,7 @@ echo
 count=1
 for i in "${modid[@]}"; do
  "${scriptpath}/moddownloader" "$scriptname" "$appid" "$i"
- online="${steaminstallation}/SteamApps/workshop/content/${appid}/${i}/WindowsNoEditor/mod.info"
+ online="${steaminstallation}/steamapps/workshop/content/${appid}/${i}/WindowsNoEditor/mod.info"
  eval online${count}="$online"
  eval modid${count}="$i"
  let count=count+1

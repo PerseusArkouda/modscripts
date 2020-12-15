@@ -41,7 +41,7 @@ else
 fi
 
 for i in "${modid[@]}"; do
- steammodpath="${steaminstallation}/SteamApps/workshop/content/${appid}/${i}"
+ steammodpath="${steaminstallation}/steamapps/workshop/content/${appid}/${i}"
  if [ ! -d "$steammodpath" ]; then
   msg="WARNING: Mod ID: $i for App ID: $appid not found in $steammodpath. Ignoring." && output_msg
  else
