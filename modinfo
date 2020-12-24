@@ -33,7 +33,7 @@ function bytesToHuman {
 for i in "${modid[@]}"; do
  mod=$(curl -s -i -X POST -H "Content-Type:application/x-www-form-urlencoded" -d "itemcount=1" -d "publishedfileids[0]=${i}" \
   'https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/?format=xml')
- modname=$(grep "<title>" <<<"$mod" | sed -e 's/<title>//g' -e 's/<\/title>//g' -e "s/&apos;/'/g" | awk 'gsub("\t",""); {pring $0}')
+ modname=$(grep "<title>" <<<"$mod" | sed -e 's/<title>//g' -e 's/<\/title>//g' -e "s/&apos;/'/g" -e 's/\t//g')
  modsize=$(grep "<file_size>" <<<"$mod" | sed -e 's/<file_size>//g' -e 's/<\/file_size>//g' | xargs)
  modsize=$(bytesToHuman "$modsize")
  appid=$(grep "<consumer_app_id>" <<<"$mod" | sed -e 's/<consumer_app_id>//g' -e 's/<\/consumer_app_id>//g' | xargs)
