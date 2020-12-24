@@ -15,7 +15,7 @@
 
 #### moddownloader 
 + Script to download/validate mods directly from Steam's workshop with steamcmd.
-   Will resume if download is interrupted until it succeeds (max limit 30 attempts).
+   It will resume if download is interrupted until it succeeds (max limit 30 attempts).
 + Requires steamcmd.
 
 #### modunpacker 
